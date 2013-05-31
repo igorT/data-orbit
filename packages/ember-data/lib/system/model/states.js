@@ -582,8 +582,15 @@ var states = {
         materializingData: function(manager) {
           manager.transitionTo('loaded.materializing');
         },
-        finishedMaterializing: Ember.K,
-        becameClean: Ember.K,
+
+        becameClean: function(manager) {
+          var record = get(manager, 'record');
+
+          record.withTransaction(function(t) {
+            t.remove(record);
+          });
+          manager.transitionTo('loaded.materializing');
+        },
 
         becomeDirty: function(manager) {
           manager.transitionTo('updated');
