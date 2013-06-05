@@ -325,6 +325,7 @@ DS.RelationshipChange.prototype = {
         hasManyName = this.getSecondRecordName(),
         store = this.store;
 
+    this.destroyed = true;
     store.removeRelationshipChangeFor(childReference, belongsToName, this.parentReference, hasManyName, this.changeType);
   },
 
