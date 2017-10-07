@@ -207,8 +207,60 @@ const {
   @namespace DS
   @extends Ember.Service
 */
+/*
+    store.push({ data: { type: 'person', id:1, attributes: { name: 'igor', age: 27 }}})
+    store.push({ data: { type: 'person', id:1, attributes: { name: 'tom', age: 27 }}})
+
+    let igor = store.push({ data: { type: 'person', id:1, attributes: { name: 'igor', age: 27 }}})
+    igor.set('name', 'mike');
+    store.push({ data: { type: 'person', id:1, attributes: { name: 'tom', age: 27 }}})
+*/
 
 Store = Service.extend({
+
+  _didPatch(operation) {
+    debugger
+    const replacement = operation.record;
+    const { type, id } = replacement;
+    let record;
+
+    switch (operation.op) {
+      case 'replaceRecord':
+        // MEGA SLOW, DEAL WITH ME
+        //record = this._identityMap.lookup({ type, id });
+        let internalModel = this._internalModelsFor(type).models.find((internalModel) => internalModel.orbitId === id)
+        if (internalModel.source === this.orbitStore) {
+          Object.keys(replacement.attributes).forEach((key) => {
+            internalModel.notifyPropertyChange(key);
+          });
+        }
+
+        /*
+        ['attributes', 'keys', 'relationships'].forEach(grouping => {
+          if (replacement[grouping]) {
+            Object.keys(replacement[grouping]).forEach(field => {
+              if (replacement[grouping].hasOwnProperty(field)) {
+              }
+            });
+          }
+        });
+        */
+        break;
+      case 'replaceAttribute':
+        /*
+        record = this._identityMap.lookup({ type, id });
+        record.propertyDidChange(operation.attribute);
+        break;
+      case 'replaceRelatedRecord':
+        record = this._identityMap.lookup({ type, id });
+        record.propertyDidChange(operation.relationship);
+        break;
+      case 'removeRecord':
+        this._identityMap.evict({ type, id });
+        break;
+        */
+    }},
+
 
   /**
     @method init
@@ -227,6 +279,7 @@ Store = Service.extend({
     });
     this.orbitStore = new SyncStore({schema: this.orbitSchema});
 
+    this.orbitStore.cache.on('patch', this._didPatch, this);
     console.log('orbit hi', this.orbitStore);
     this._super(...arguments);
     this._backburner = new Backburner(['normalizeRelationships', 'syncRelationships', 'finished']);

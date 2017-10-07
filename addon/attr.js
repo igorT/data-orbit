@@ -26,13 +26,7 @@ function hasValue(record, key) {
 }
 
 function getValue(record, key) {
-  if (key in record._attributes) {
-    return record._attributes[key];
-  } else if (key in record._inFlightAttributes) {
-    return record._inFlightAttributes[key];
-  } else {
-    return record._data[key];
-  }
+  return record.getAttribute(key);
 }
 
 /**
@@ -137,11 +131,15 @@ export default function attr(type, options) {
   return Ember.computed({
     get(key) {
       let internalModel = this._internalModel;
+      return getValue(internalModel, key);
+      
+      /*
       if (hasValue(internalModel, key)) {
         return getValue(internalModel, key);
       } else {
         return getDefaultValue(this, options, key);
       }
+      */
     },
     set(key, value) {
       let internalModel = this._internalModel;

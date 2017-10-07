@@ -6,6 +6,7 @@ import Relationships from "../relationships/state/create";
 import Snapshot from "../snapshot";
 import isEnabled from '../../features';
 import OrderedSet from "../ordered-set";
+import { deepGet } from '@orbit/utils';
 
 import { getOwner } from '../../utils';
 
@@ -604,22 +605,31 @@ export default class InternalModel {
     return this.modelClass.inverseFor(key);
   }
 
+  getAttribute(key) {
+    let data = this.source.cache.records(this.modelName).get(this.orbitId);
+    return deepGet(data, ['attributes', key]);
+  }
+
   setupData(data) {
     heimdall.increment(setupData);
     this.store._internalModelDidReceiveRelationshipData(this.modelName, this.id, data.relationships);
 
     let changedKeys;
 
-    if (this.hasRecord) {
-      changedKeys = this._changedKeys(data.attributes);
-    }
+    //if (this.hasRecord) {
+     // changedKeys = this._changedKeys(data.attributes);
+    //}
+    // HACKITY HACK
+    data.id = this.orbitId;
 
-    assign(this._data, data.attributes);
+    this.store.orbitStore.immediateUpdate(t => t.replaceRecord(data));
+
+    //assign(this._data, data.attributes);
     this.pushedData();
 
-    if (this.hasRecord) {
-      this._record._notifyProperties(changedKeys);
-    }
+   // if (this.hasRecord) {
+    //  this._record._notifyProperties(changedKeys);
+    //}
   }
 
   get isDestroyed() {
@@ -1214,6 +1224,7 @@ export default class InternalModel {
     @private
   */
   _changedKeys(updates) {
+    debugger
     let changedKeys = [];
 
     if (updates) {

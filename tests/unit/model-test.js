@@ -92,6 +92,61 @@ test('resetting a property on a record cause it to become clean again', function
   });
 });
 
+
+test('ember orbit kinda works', function(assert) {
+  assert.expect(4);
+
+  env.adapter.updateRecord = function(store, type, snapshot) {
+    return Ember.RSVP.Promise.resolve()
+  };
+
+  return run(() => {
+    store.push({
+      data: {
+        type: 'person',
+        id: '1',
+        attributes: {
+          name: 'Tom',
+          isDrugAddict: true
+        }
+      }
+    });
+
+    let person = store.peekRecord('person', 1);
+    assert.equal(person.get('name'), 'Tom');
+    assert.equal(person.get('isDrugAddict'), true);
+
+    person.set('name', "Thomas");
+
+    store.push({
+      data: {
+        type: 'person',
+        id: '1',
+        attributes: {
+          name: 'Tom',
+          isDrugAddict: false
+        }
+      }
+    });
+
+    assert.equal(person.get('name'), 'Thomas');
+    assert.equal(person.get('isDrugAddict'), false);
+
+    /*
+    let saving = person.save()
+
+    assert.equal(person.get('name'), 'Thomas');
+
+    person.set('name', 'Tomathy');
+    assert.equal(person.get('name'), 'Tomathy');
+
+    return saving.then(() => {
+      assert.equal(person.get('hasDirtyAttributes'), false, 'The person is now clean');
+    });
+    */
+  });
+});
+
 test('resetting a property to the current in-flight value causes it to become clean when the save completes', function(assert) {
   assert.expect(4);
 
