@@ -11,6 +11,7 @@ import { assert, inspect } from '@ember/debug';
 import RootState from "./states";
 import Snapshot from "../snapshot";
 import OrderedSet from "../ordered-set";
+import { deepGet } from '@orbit/utils';
 
 import { getOwner } from '../../utils';
 
@@ -496,6 +497,11 @@ export default class InternalModel {
 
   inverseFor(key) {
     return this.modelClass.inverseFor(key);
+  }
+
+  getAttribute(key) {
+    let data = this.source.cache.records(this.modelName).get(this.orbitId);
+    return deepGet(data, ['attributes', key]);
   }
 
   setupData(data) {

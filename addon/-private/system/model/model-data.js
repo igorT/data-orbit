@@ -6,6 +6,7 @@ import { isEqual } from '@ember/utils';
 import { assert, warn, inspect } from '@ember/debug';
 import { copy } from '@ember/object/internals';
 import { get } from '@ember/object';
+import { deepGet } from '@orbit/utils';
 
 const emberAssign = assign || merge;
 export default class ModelData {
@@ -39,18 +40,22 @@ export default class ModelData {
     this.source = this.source.fork();
   }
 
-  replaceAttribute(key, value) {
+  setAttr(key, value) {
     this.source.immediateUpdate(t => t.replaceAttribute(this.orbitIdentity, key, value));
   }
   // PUBLIC API
 
   setupData(data, calculateChange) {
     let changedKeys;
+    data.id = this.orbitId;
+    this.store.orbitStore.immediateUpdate(t => t.replaceRecord(data));
+    
 
     if (calculateChange) {
       changedKeys = this._changedKeys(data.attributes);
     }
 
+    /*
     emberAssign(this._data, data.attributes);
     if (this.internalModel.hasRecord && this.__attributes) {
       // only do this if we are materialized and we have attribute changes
@@ -60,6 +65,7 @@ export default class ModelData {
     if (data.relationships) {
       this._setupRelationships(data);
     }
+    */
 
     return changedKeys;
   }
@@ -244,42 +250,9 @@ export default class ModelData {
     }
   }
 
-  setAttr(key, value) {
-    let oldValue = this.getAttr(key);
-    let originalValue;
-
-    if (value !== oldValue) {
-      // Add the new value to the changed attributes hash; it will get deleted by
-      // the 'didSetProperty' handler if it is no different from the original value
-      this._attributes[key] = value;
-
-      if (key in this._inFlightAttributes) {
-        originalValue = this._inFlightAttributes[key];
-      } else {
-        originalValue = this._data[key];
-      }
-      // If we went back to our original value, we shouldn't keep the attribute around anymore
-      if (value === originalValue) {
-        delete this._attributes[key];
-      }
-      // TODO IGOR DAVID whats up with the send
-      this.internalModel.send('didSetProperty', {
-        name: key,
-        oldValue: oldValue,
-        originalValue: originalValue,
-        value: value
-      });
-    }
-  }
-
   getAttr(key) {
-    if (key in this._attributes) {
-      return this._attributes[key];
-    } else if (key in this._inFlightAttributes) {
-      return this._inFlightAttributes[key];
-    } else {
-      return this._data[key];
-    }
+    let data = this.source.cache.records(this.modelName).get(this.orbitId);
+    return deepGet(data, ['attributes', key]);
   }
 
   hasAttr(key) {

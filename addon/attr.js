@@ -129,11 +129,15 @@ export default function attr(type, options) {
   return computed({
     get(key) {
       let internalModel = this._internalModel;
+      return getValue(internalModel, key);
+      
+      /*
       if (hasValue(internalModel, key)) {
         return getValue(internalModel, key);
       } else {
         return getDefaultValue(this, options, key);
       }
+      */
     },
     set(key, value) {
       this._internalModel._modelData.setAttr(key, value);
