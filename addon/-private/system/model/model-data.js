@@ -9,7 +9,7 @@ import { get } from '@ember/object';
 
 const emberAssign = assign || merge;
 export default class ModelData {
-  constructor(modelName, id, store, data, internalModel) {
+  constructor(modelName, id, store, data, internalModel, isNew) {
     this.store = store;
     this.modelName = modelName;
     this.internalModel = internalModel;
@@ -18,8 +18,30 @@ export default class ModelData {
     }
     this.__relationships = null;
     this.__implicitRelationships = null;
+    this.source = this.store.orbitStore;
+
+    if (isNew) {
+      this.source = this.store.orbitStore.fork();
+    }
+    
+    this.source.on('update', e => { console.log(e); });
+    this.source.on('transform', e => { console.log(e); });
+    
+    let t = this.source.transformBuilder.addRecord({type: this.modelName});
+    let orbitId = t.record.id;
+
+    this.source.immediateUpdate(t);
+    this.orbitId = orbitId;
+    this.orbitIdentity = { type: this.modelName, id: this.orbitId };
   }
 
+  forkSource() {
+    this.source = this.source.fork();
+  }
+
+  replaceAttribute(key, value) {
+    this.source.immediateUpdate(t => t.replaceAttribute(this.orbitIdentity, key, value));
+  }
   // PUBLIC API
 
   setupData(data, calculateChange) {

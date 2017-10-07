@@ -103,7 +103,7 @@ let nextBfsId = 1;
   @class InternalModel
 */
 export default class InternalModel {
-  constructor(modelName, id, store, data) {
+  constructor(modelName, id, store, data, isNew) {
     heimdall.increment(new_InternalModel);
     this.id = id;
     this.store = store;
@@ -111,7 +111,7 @@ export default class InternalModel {
 
     let ModelDataClass = this.store.modelDataClassFor(modelName, id);
 
-    this._modelData = new ModelDataClass(modelName, id, store, data, this);
+    this._modelData = new ModelDataClass(modelName, id, store, data, this, isNew);
     // this ensure ordered set can quickly identify this as unique
     this[Ember.GUID_KEY] = InternalModelReferenceId++ + 'internal-model';
 
