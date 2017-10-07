@@ -12,6 +12,40 @@
   dependencies:
     "@glimmer/di" "^0.2.0"
 
+"@orbit/coordinator@^0.15.6":
+  version "0.15.6"
+  resolved "https://registry.yarnpkg.com/@orbit/coordinator/-/coordinator-0.15.6.tgz#67e2674fb0a8704b8ab5fb92a1babe33063c79c6"
+
+"@orbit/core@^0.15.0":
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/@orbit/core/-/core-0.15.0.tgz#88147f65573b0b8fad8fcd89fd2364718625ab92"
+  dependencies:
+    "@orbit/utils" "^0.15.0"
+
+"@orbit/data@^0.15.6":
+  version "0.15.6"
+  resolved "https://registry.yarnpkg.com/@orbit/data/-/data-0.15.6.tgz#5dd173c881164383f4bdb39b2a0029b8d1e4ab93"
+  dependencies:
+    "@orbit/core" "^0.15.0"
+    "@orbit/utils" "^0.15.0"
+
+"@orbit/immutable@^0.15.0":
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/@orbit/immutable/-/immutable-0.15.0.tgz#c4009dd41a8fb2b560e9e3e276ee2fc43d60a7e3"
+
+"@orbit/store@^0.15.6":
+  version "0.15.6"
+  resolved "https://registry.yarnpkg.com/@orbit/store/-/store-0.15.6.tgz#2180d580f952f8703fda852fa8faca90d88283c4"
+  dependencies:
+    "@orbit/core" "^0.15.0"
+    "@orbit/data" "^0.15.6"
+    "@orbit/immutable" "^0.15.0"
+    "@orbit/utils" "^0.15.0"
+
+"@orbit/utils@^0.15.0":
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/@orbit/utils/-/utils-0.15.0.tgz#496eda743747715e39d27ada001b13170ec10383"
+
 "@types/node@*", "@types/node@^7.0.5":
   version "7.0.43"
   resolved "https://registry.npmjs.org/@types/node/-/node-7.0.43.tgz#a187e08495a075f200ca946079c914e1a5fe962c"
