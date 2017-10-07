@@ -20,6 +20,12 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@orbit/coordinator": "^0.15.6",
+    "@orbit/core": "^0.15.0",
+    "@orbit/data": "^0.15.6",
+    "@orbit/immutable": "^0.15.0",
+    "@orbit/store": "^0.15.6",
+    "@orbit/utils": "^0.15.0",
     "amd-name-resolver": "0.0.7",
     "babel-plugin-ember-modules-api-polyfill": "^1.4.2",
     "babel-plugin-feature-flags": "^0.3.1",
