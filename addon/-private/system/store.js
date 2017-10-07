@@ -2,6 +2,8 @@
   @module ember-data
 */
 
+import { Schema as OrbitSchema } from '@orbit/data';
+import SyncStore from './orbit/sync-store';
 import Ember from 'ember';
 import { InvalidError } from '../adapters/errors';
 import { instrument } from 'ember-data/-debug';
@@ -205,6 +207,7 @@ const {
   @namespace DS
   @extends Ember.Service
 */
+
 Store = Service.extend({
 
   /**
@@ -212,6 +215,19 @@ Store = Service.extend({
     @private
   */
   init() {
+    this.orbitSchema = new OrbitSchema({
+      models: {
+        person: {
+          attributes: {
+            name: { type: 'string' },
+            isDrugAddict: { type: 'boolean'}
+          }
+        }
+      }
+    });
+    this.orbitStore = new SyncStore({schema: this.orbitSchema});
+
+    console.log('orbit hi', this.orbitStore);
     this._super(...arguments);
     this._backburner = new Backburner(['normalizeRelationships', 'syncRelationships', 'finished']);
     // internal bookkeeping; not observable
@@ -364,7 +380,8 @@ Store = Service.extend({
     // Coerce ID to a string
     properties.id = coerceId(properties.id);
 
-    let internalModel = this._buildInternalModel(normalizedModelName, properties.id);
+    let internalModel = this._buildInternalModel(normalizedModelName, properties.id, null, true);
+
     internalModel.loadedData();
     let record = internalModel.getRecord(properties);
 
@@ -2566,7 +2583,7 @@ Store = Service.extend({
     @param {Object} data
     @return {InternalModel} internal model
   */
-  _buildInternalModel(modelName, id, data) {
+  _buildInternalModel(modelName, id, data, isNew) {
     heimdall.increment(_buildInternalModel);
 
     assert(`You can no longer pass a modelClass as the first argument to store._buildInternalModel. Pass modelName instead.`, typeof modelName === 'string');
@@ -2577,7 +2594,7 @@ Store = Service.extend({
 
     // lookupFactory should really return an object that creates
     // instances with the injections applied
-    let internalModel = new InternalModel(modelName, id, this, data);
+    let internalModel = new InternalModel(modelName, id, this, data, isNew);
 
     this._internalModelsFor(modelName).add(internalModel, id);
 

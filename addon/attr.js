@@ -149,6 +149,7 @@ export default function attr(type, options) {
       let originalValue;
 
       if (value !== oldValue) {
+        /*
         // Add the new value to the changed attributes hash; it will get deleted by
         // the 'didSetProperty' handler if it is no different from the original value
         internalModel._attributes[key] = value;
@@ -158,6 +159,9 @@ export default function attr(type, options) {
         } else {
           originalValue = internalModel._data[key];
         }
+        */
+        debugger
+        internalModel.replaceAttribute(key, value);
 
         this._internalModel.send('didSetProperty', {
           name: key,

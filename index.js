@@ -11,6 +11,7 @@ const semver = require('semver');
 const version = require('./lib/version');
 const BroccoliDebug = require('broccoli-debug');
 const calculateCacheKeyForTree = require('calculate-cache-key-for-tree');
+const mergeTrees = require('broccoli-merge-trees');
 
 // allow toggling of heimdall instrumentation
 let INSTRUMENT_HEIMDALL = false;
@@ -22,6 +23,35 @@ for (let i = 1; i < args.length; i++) {
     break;
   }
 }
+
+function getLibPath(packagePath) {
+  let packageJson = require(packagePath);
+
+  return path.dirname(packageJson.module || packageJson.main || '.');
+}
+
+function findLib(name, libPath) {
+  let packagePath = path.join(name, 'package');
+  let packageRoot = path.dirname(require.resolve(packagePath));
+
+  libPath = libPath || getLibPath(packagePath);
+
+  return path.resolve(packageRoot, libPath);
+}
+
+function packageTree(name, destDir) {
+  let libPath = findLib(name);
+
+  destDir = destDir || path.join.apply(this, name.split('/'));
+
+  let tree = Funnel(libPath, {
+    include: ['**/*.js'],
+    destDir
+  });
+
+  return tree;
+}
+
 const NOOP_TREE = function(dir) {
   return { inputTree: dir, rebuild() { return []; } };
 };
@@ -114,6 +144,37 @@ module.exports = {
     return dir;
   },
 
+
+  treeForOrbit() {
+    let packageTrees = [
+      packageTree('@orbit/utils'),
+      packageTree('@orbit/core'),
+      packageTree('@orbit/data'),
+      packageTree('@orbit/store'),
+      packageTree('@orbit/immutable'),
+      packageTree('@orbit/coordinator')
+    ];
+
+    let host = this.app || this.parent;
+    let orbitOptions = host.options && host.options.orbit;
+    let customPackages = orbitOptions && orbitOptions.packages;
+
+    if (customPackages) {
+      customPackages.forEach(source => {
+        packageTrees.push(packageTree(source));
+      });
+    }
+
+    let babel = this.addons.find(addon => addon.name === 'ember-cli-babel');
+    let transpiledPackageTrees = packageTrees.map(tree => babel.transpileTree(tree));
+
+    let mergedPackageTree = Funnel(mergeTrees(transpiledPackageTrees), {
+      destDir: 'modules'
+    });
+
+    return mergedPackageTree;
+  },
+
   treeForAddon(tree) {
     if (this._forceBowerUsage) { return NOOP_TREE(tree); }
 
@@ -175,7 +236,8 @@ module.exports = {
 
     return this.debugTree(merge([
       publicTree,
-      privateTree
+      privateTree,
+      this.treeForOrbit()
     ]), 'final');
   },
 
