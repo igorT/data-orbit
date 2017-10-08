@@ -238,7 +238,11 @@ export default class ModelData {
   }
 
   getBelongsTo(key) {
-    return this.getRelationship(key);
+      let relationship = this.getRelationship(key);
+      if (relationship && relationship.data) {
+        return this.store._internalModelForId(relationship.data.type, relationship.data.id).getRecord();
+      }
+      return null;
   }
 
   setBelongsTo(key, value) {

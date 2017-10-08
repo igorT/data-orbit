@@ -288,7 +288,31 @@ Store = Service.extend({
     @private
   */
   init() {
-    this.orbitStore = new SyncStore({schema: new OrbitSchema({})});
+    this.orbitSchema = new OrbitSchema({
+      models: {
+        tag: {
+          attributes: {
+            name: { type: 'string' }
+          },
+          relationships: {
+            people: { type: 'hasMany', model: 'person', inverse:'tag' }
+          }
+
+        },
+        person: {
+          attributes: {
+            name: { type: 'string' },
+            firstName: { type: 'string' },
+            lastName: { type: 'string' },
+            isDrugAddict: { type: 'boolean'}
+          },
+          relationships: {
+            tag: { type: 'hasOne', model: 'tag', inverse: 'people' }
+          }
+        }
+      }
+    });
+    this.orbitStore = new SyncStore({schema: this.orbitSchema});
 
     this.orbitStore.cache.on('patch', this._didPatch, this);
 
@@ -1215,8 +1239,6 @@ Store = Service.extend({
       return this._buildInternalModel(modelName, trueId);
     }
   },
-
-
 
   /**
     @method findMany
@@ -2189,6 +2211,7 @@ Store = Service.extend({
         //Support looking up mixins as base types for polymorphic relationships
         factory = this._modelForMixin(modelName);
       }
+
       if (!factory) {
         throw new EmberError(`No model was found for '${modelName}'`);
       }
