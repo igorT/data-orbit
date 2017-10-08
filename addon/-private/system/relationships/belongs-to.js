@@ -114,8 +114,12 @@ export default function belongsTo(modelName, options) {
           id: 'ds.model.embedded-option-in-belongs-to'
         });
       }
-
-      return this._internalModel._relationships.get(key).getRecord();
+      
+      let relationship = this._internalModel.getRelationship(key);
+      if (relationship && relationship.data) {
+        return this.store._internalModelForId(relationship.data.type, relationship.data.id).getRecord();
+      }
+      return null;
     },
     set(key, value) {
       if (value === undefined) {

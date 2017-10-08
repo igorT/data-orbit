@@ -628,6 +628,7 @@ export default class InternalModel {
     return deepGet(data, ['relationships', key]);
   }
 
+<<<<<<< HEAD
   setBelongsTo(key, value) {
     let toSet = value;
     if (toSet) {
@@ -637,6 +638,8 @@ export default class InternalModel {
     this.localChanges.push([update.transform, update.inverse, key]);
   }
 
+=======
+>>>>>>> sync belongsTo getting works
   getAttribute(key) {
     let data = this.source.cache.records(this.modelName).get(this.orbitId);
     return deepGet(data, ['attributes', key]);

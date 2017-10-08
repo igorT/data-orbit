@@ -219,6 +219,7 @@ const {
 
 Store = Service.extend({
 
+<<<<<<< HEAD
   createOrbitSchema() {
       if (!injections.models) {
         const app = getOwner(injections);
@@ -242,6 +243,9 @@ Store = Service.extend({
       return new Schema(injections);
   },
   
+=======
+
+>>>>>>> sync belongsTo getting works
   _didPatch(operation) {
     debugger
     const replacement = operation.record;
@@ -297,7 +301,35 @@ Store = Service.extend({
     @private
   */
   init() {
+<<<<<<< HEAD
     this.orbitStore = new SyncStore({schema: new OrbitSchema({})});
+=======
+    this.orbitSchema = new OrbitSchema({
+      models: {
+        tag: {
+          attributes: {
+            name: { type: 'string' }
+          },
+          relationships: {
+            people: { type: 'hasMany', model: 'person', inverse:'tag' }
+          }
+
+        },
+        person: {
+          attributes: {
+            name: { type: 'string' },
+            firstName: { type: 'string' },
+            lastName: { type: 'string' },
+            isDrugAddict: { type: 'boolean'}
+          },
+          relationships: {
+            tag: { type: 'hasOne', model: 'tag', inverse: 'people' }
+          }
+        }
+      }
+    });
+    this.orbitStore = new SyncStore({schema: this.orbitSchema});
+>>>>>>> sync belongsTo getting works
 
     this.orbitStore.cache.on('patch', this._didPatch, this);
 
@@ -1231,7 +1263,9 @@ Store = Service.extend({
   },
 
   _internalModelDidReceiveRelationshipData(modelName, id, relationshipData) {
-    this._relationshipsPayloads.push(modelName, id, relationshipData);
+    debugger
+    // this._relationshipsPayloads.push(modelName, id, relationshipData);
+  
   },
 
   _internalModelDestroyed(internalModel) {
@@ -2209,6 +2243,7 @@ Store = Service.extend({
         //Support looking up mixins as base types for polymorphic relationships
         factory = this._modelForMixin(modelName);
       }
+
       if (!factory) {
         throw new EmberError(`No model was found for '${modelName}'`);
       }
