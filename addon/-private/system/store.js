@@ -218,29 +218,7 @@ const {
 
 Store = Service.extend({
 
-  createOrbitSchema() {
-      if (!injections.models) {
-        const app = getOwner(injections);
-        const modelSchemas = {};
-  
-        let modelNames = injections.modelNames || getRegisteredModels(app.base.modulePrefix);
-  
-        modelNames.forEach(name => {
-          let model = app.factoryFor(`model:${name}`).class;
-          modelSchemas[name] = {
-            id: get(model, 'id'),
-            keys: get(model, 'keys'),
-            attributes: get(model, 'attributes'),
-            relationships: get(model, 'relationships')
-          };
-        });
-  
-        injections.models = modelSchemas;
-      }
 
-      return new Schema(injections);
-  },
-  
   _didPatch(operation) {
     debugger
     const replacement = operation.record;
@@ -298,12 +276,24 @@ Store = Service.extend({
   init() {
     this.orbitSchema = new OrbitSchema({
       models: {
+        tag: {
+          attributes: {
+            name: { type: 'string' }
+          },
+          relationships: {
+            people: { type: 'hasMany', model: 'person', inverse:'tag' }
+          }
+
+        },
         person: {
           attributes: {
             name: { type: 'string' },
             firstName: { type: 'string' },
             lastName: { type: 'string' },
             isDrugAddict: { type: 'boolean'}
+          },
+          relationships: {
+            tag: { type: 'hasOne', model: 'tag', inverse: 'people' }
           }
         }
       }
@@ -1242,7 +1232,9 @@ Store = Service.extend({
   },
 
   _internalModelDidReceiveRelationshipData(modelName, id, relationshipData) {
-    this._relationshipsPayloads.push(modelName, id, relationshipData);
+    debugger
+    // this._relationshipsPayloads.push(modelName, id, relationshipData);
+  
   },
 
   _internalModelDestroyed(internalModel) {
@@ -2220,6 +2212,7 @@ Store = Service.extend({
         //Support looking up mixins as base types for polymorphic relationships
         factory = this._modelForMixin(modelName);
       }
+
       if (!factory) {
         throw new EmberError(`No model was found for '${modelName}'`);
       }
