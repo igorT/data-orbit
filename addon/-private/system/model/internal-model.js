@@ -166,12 +166,14 @@ export default class InternalModel {
     // Used during the mark phase of unloading to avoid checking the same internal
     // model twice in the same scan
     this._bfsId = 0;
-    this.source = this.store.orbitStore;
+    this.source = this.store.orbitLocalSource;
 
+
+    /*
     if (isNew) {
       this.source = this.store.orbitStore.fork();
     }
-    
+    */
     this.source.on('update', e => { console.log(e); });
     this.source.on('transform', e => { console.log(e); });
     
@@ -181,14 +183,28 @@ export default class InternalModel {
     this.source.immediateUpdate(t);
     this.orbitId = orbitId;
     this.orbitIdentity = { type: this.modelName, id: this.orbitId };
+    this.hasForked = false;
+    this.localChanges = [];
   }
 
   forkSource() {
+    this.baseSource = this.source;
+    this.source.on('transform', e => { 
+      console.log(e);
+    });
     this.source = this.source.fork();
   }
 
   replaceAttribute(key, value) {
-    this.source.immediateUpdate(t => t.replaceAttribute(this.orbitIdentity, key, value));
+    /*
+    if (!this.hasForked) {
+      this.forkSource();
+    }
+    */
+
+
+    let update = this.source.immediateUpdate(t => t.replaceAttribute(this.orbitIdentity, key, value));
+    this.localChanges.push([update.transform, update.inverse]);
   }
 
   get modelClass() {

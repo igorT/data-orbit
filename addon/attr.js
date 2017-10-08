@@ -158,7 +158,6 @@ export default function attr(type, options) {
           originalValue = internalModel._data[key];
         }
         */
-        debugger
         internalModel.replaceAttribute(key, value);
 
         this._internalModel.send('didSetProperty', {

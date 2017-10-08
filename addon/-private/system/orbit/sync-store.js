@@ -12,13 +12,18 @@ export default class SyncStore extends OrbitStore {
     }
 
     let result = this._update(transform);
-    return this._transformed([transform])
+    
+    let promise = this._transformed([transform])
         .then(() => settleInSeries(this, 'update', transform, result))
         .then(() => result)
         .catch(error => {
           return settleInSeries(this, 'updateFail', transform, error)
             .then(() => { throw error; });
         });
+
+    promise.transform = transform;
+    promise.inverse = this._transformInverses[transform.id];
+    return promise;
   }
 
   fork(settings) {
