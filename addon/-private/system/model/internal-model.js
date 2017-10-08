@@ -204,7 +204,7 @@ export default class InternalModel {
 
 
     let update = this.source.immediateUpdate(t => t.replaceAttribute(this.orbitIdentity, key, value));
-    this.localChanges.push([update.transform, update.inverse]);
+    this.localChanges.push([update.transform, update.inverse, key]);
   }
 
   get modelClass() {
@@ -814,6 +814,16 @@ export default class InternalModel {
   }
 
   rollbackAttributes() {
+    // optimize key notification
+    this.localChanges.forEach(([transform, inverseTransform, key]) => {
+      this.source.immediateUpdate(inverseTransform);
+      this.notifyPropertyChange(key);
+    });
+
+    this.localChanges = [];
+    this.send('rolledBack');
+    
+    /*    
     let dirtyKeys;
     if (this.hasChangedAttributes()) {
       dirtyKeys = Object.keys(this._attributes);
@@ -834,11 +844,11 @@ export default class InternalModel {
       this._inFlightAttributes = null;
     }
 
-    this.send('rolledBack');
-
     if (dirtyKeys && dirtyKeys.length > 0) {
       this._record._notifyProperties(dirtyKeys);
     }
+         */
+
   }
 
   /*
