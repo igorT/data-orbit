@@ -19,7 +19,8 @@ export default class ModelData {
     }
     this.__relationships = null;
     this.__implicitRelationships = null;
-    this.source = this.store.orbitStore;
+    this.source = this.store.orbitLocalSource;
+
 
     if (isNew) {
       this.source = this.store.orbitStore.fork();
@@ -34,14 +35,21 @@ export default class ModelData {
     this.source.immediateUpdate(t);
     this.orbitId = orbitId;
     this.orbitIdentity = { type: this.modelName, id: this.orbitId };
+    this.hasForked = false;
+    this.localChanges = [];
   }
 
   forkSource() {
+    this.baseSource = this.source;
+    this.source.on('transform', e => { 
+      console.log(e);
+    });
     this.source = this.source.fork();
   }
 
   setAttr(key, value) {
-    this.source.immediateUpdate(t => t.replaceAttribute(this.orbitIdentity, key, value));
+    let update = this.source.immediateUpdate(t => t.replaceAttribute(this.orbitIdentity, key, value));
+    this.localChanges.push([update.transform, update.inverse]);
   }
   // PUBLIC API
 

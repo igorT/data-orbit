@@ -220,13 +220,19 @@ Store = Service.extend({
         // MEGA SLOW, DEAL WITH ME
         //record = this._identityMap.lookup({ type, id });
         let internalModel = this._internalModelsFor(type).models.find((internalModel) => internalModel._modelData.orbitId === id)
-        if (internalModel._modelData.source === this.orbitStore) {
-          Object.keys(replacement.attributes).forEach((key) => {
-            internalModel.notifyPropertyChange(key);
-          });
+        internalModel._modelData.source.immediateUpdate([operation]);
+
+
+        internalModel._modelData.localChanges.forEach(([localTransform]) => internalModel._modelData.source.immediateUpdate(localTransform.operations))
+        Object.keys(replacement.attributes).forEach((key) => {
+          internalModel.notifyPropertyChange(key);
+        });
+          /*
+
+        if (internalModel.source === this.orbitStore) {
+
         }
 
-        /*
         ['attributes', 'keys', 'relationships'].forEach(grouping => {
           if (replacement[grouping]) {
             Object.keys(replacement[grouping]).forEach(field => {
@@ -271,7 +277,8 @@ Store = Service.extend({
     this.orbitStore = new SyncStore({schema: this.orbitSchema});
 
     this.orbitStore.cache.on('patch', this._didPatch, this);
-    console.log('orbit hi', this.orbitStore);
+
+    this.orbitLocalSource = this.orbitStore.fork();
     this._super(...arguments);
     this._backburner = new Backburner(['normalizeRelationships', 'syncRelationships', 'finished']);
     // internal bookkeeping; not observable
