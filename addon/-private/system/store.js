@@ -276,16 +276,16 @@ Store = Service.extend({
   init() {
     this.orbitSchema = new OrbitSchema({
       models: {
-        tag: {
+        job: {
           attributes: {
             name: { type: 'string' }
           },
           relationships: {
-            people: { type: 'hasMany', model: 'person', inverse:'tag' }
+            user: { type: 'hasOne', model: 'user', inverse:'job' }
           }
 
         },
-        person: {
+        user: {
           attributes: {
             name: { type: 'string' },
             firstName: { type: 'string' },
@@ -293,7 +293,7 @@ Store = Service.extend({
             isDrugAddict: { type: 'boolean'}
           },
           relationships: {
-            tag: { type: 'hasOne', model: 'tag', inverse: 'people' }
+            job: { type: 'hasOne', model: 'job', inverse: 'user' }
           }
         }
       }
