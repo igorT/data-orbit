@@ -209,6 +209,29 @@ const {
 
 Store = Service.extend({
 
+  createOrbitSchema() {
+      if (!injections.models) {
+        const app = getOwner(injections);
+        const modelSchemas = {};
+  
+        let modelNames = injections.modelNames || getRegisteredModels(app.base.modulePrefix);
+  
+        modelNames.forEach(name => {
+          let model = app.factoryFor(`model:${name}`).class;
+          modelSchemas[name] = {
+            id: get(model, 'id'),
+            keys: get(model, 'keys'),
+            attributes: get(model, 'attributes'),
+            relationships: get(model, 'relationships')
+          };
+        });
+  
+        injections.models = modelSchemas;
+      }
+
+      return new Schema(injections);
+  },
+  
   _didPatch(operation) {
     debugger
     const replacement = operation.record;
@@ -2130,6 +2153,7 @@ Store = Service.extend({
 
       //Cache the class as a model
       owner.register('model:' + normalizedModelName, ModelForMixin);
+      // TELL ORBIT ABOUT THIS NEW MODEL
     }
 
     return this.modelFactoryFor(normalizedModelName);
