@@ -23,6 +23,30 @@ module('unit/model/rollbackAttributes - model.rollbackAttributes()', {
     store = env.store;
   }
 });
+test('changes to attributes can be rolled back orbit', function(assert) {
+  let person = run(() => {
+    store.push({
+      data: {
+        type: 'person',
+        id: '1',
+        attributes: {
+          firstName: "Tom",
+          lastName: "Dale"
+        }
+      }
+    });
+    person = store.peekRecord('person', 1);
+    person.set('firstName', "Thomas");
+    return person;
+  });
+
+  assert.equal(person.get('firstName'), "Thomas");
+
+  run(() => person.rollbackAttributes());
+
+  assert.equal(person.get('firstName'), "Tom");
+  assert.equal(person.get('hasDirtyAttributes'), false);
+});
 
 test('changes to attributes can be rolled back', function(assert) {
   let person = run(() => {

@@ -269,6 +269,8 @@ Store = Service.extend({
         person: {
           attributes: {
             name: { type: 'string' },
+            firstName: { type: 'string' },
+            lastName: { type: 'string' },
             isDrugAddict: { type: 'boolean'}
           }
         }

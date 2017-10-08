@@ -12,33 +12,19 @@
   dependencies:
     "@glimmer/di" "^0.2.0"
 
-<<<<<<< HEAD
-"@orbit/coordinator@^0.15.6":
-  version "0.15.8"
-  resolved "https://registry.yarnpkg.com/@orbit/coordinator/-/coordinator-0.15.8.tgz#39b7cbe77e13c859b90299ae32fc6695d8f69fed"
-
-"@orbit/core@^0.15.0", "@orbit/core@^0.15.7":
-=======
 "@orbit/coordinator@^0.15.7":
   version "0.15.7"
   resolved "https://registry.yarnpkg.com/@orbit/coordinator/-/coordinator-0.15.7.tgz#6bf4aaa03879b3aa7e3a54b6f73c5a38c00642cf"
 
 "@orbit/core@^0.15.7":
->>>>>>> d8b65d93... continuous rebase works
   version "0.15.7"
   resolved "https://registry.yarnpkg.com/@orbit/core/-/core-0.15.7.tgz#c577f52832b3e463c7497d9fbe569263d7a5112a"
   dependencies:
     "@orbit/utils" "^0.15.7"
 
-<<<<<<< HEAD
-"@orbit/data@^0.15.6", "@orbit/data@^0.15.8":
-  version "0.15.8"
-  resolved "https://registry.yarnpkg.com/@orbit/data/-/data-0.15.8.tgz#e63f247ddf1dca5759bc69f009e284a620ad55e0"
-=======
 "@orbit/data@^0.15.7":
   version "0.15.7"
   resolved "https://registry.yarnpkg.com/@orbit/data/-/data-0.15.7.tgz#3127e290505af478cd58a9754ac855e4bb128004"
->>>>>>> d8b65d93... continuous rebase works
   dependencies:
     "@orbit/core" "^0.15.7"
     "@orbit/utils" "^0.15.7"
@@ -47,24 +33,6 @@
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/@orbit/immutable/-/immutable-0.15.0.tgz#c4009dd41a8fb2b560e9e3e276ee2fc43d60a7e3"
 
-<<<<<<< HEAD
-"@orbit/store@^0.15.6":
-  version "0.15.8"
-  resolved "https://registry.yarnpkg.com/@orbit/store/-/store-0.15.8.tgz#b4f550dc94f607326adb15569db76570aafa7453"
-  dependencies:
-    "@orbit/core" "^0.15.7"
-    "@orbit/data" "^0.15.8"
-    "@orbit/immutable" "^0.15.0"
-    "@orbit/utils" "^0.15.7"
-
-"@orbit/utils@^0.15.0", "@orbit/utils@^0.15.7":
-  version "0.15.7"
-  resolved "https://registry.yarnpkg.com/@orbit/utils/-/utils-0.15.7.tgz#fe68da9f1f90e6be4a1ac149e5860dd78a30da38"
-
-"@types/node@*":
-  version "8.0.51"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.51.tgz#b31d716fb8d58eeb95c068a039b9b6292817d5fb"
-=======
 "@orbit/store@^0.15.7":
   version "0.15.7"
   resolved "https://registry.yarnpkg.com/@orbit/store/-/store-0.15.7.tgz#d2fdc0b79e09b566fca00e72fbd6f5f3a896c50d"
@@ -77,7 +45,6 @@
 "@orbit/utils@^0.15.7":
   version "0.15.7"
   resolved "https://registry.yarnpkg.com/@orbit/utils/-/utils-0.15.7.tgz#fe68da9f1f90e6be4a1ac149e5860dd78a30da38"
->>>>>>> d8b65d93... continuous rebase works
 
 "@types/node@^7.0.5":
   version "7.0.46"

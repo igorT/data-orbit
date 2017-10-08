@@ -49,7 +49,7 @@ export default class ModelData {
 
   setAttr(key, value) {
     let update = this.source.immediateUpdate(t => t.replaceAttribute(this.orbitIdentity, key, value));
-    this.localChanges.push([update.transform, update.inverse]);
+    this.localChanges.push([update.transform, update.inverse, key]);
   }
   // PUBLIC API
 
@@ -177,26 +177,11 @@ export default class ModelData {
   }
 
   rollbackAttributes() {
-    let dirtyKeys;
-    if (this.hasChangedAttributes()) {
-      dirtyKeys = Object.keys(this._attributes);
-      this._attributes = null;
-    }
-
-    if (get(this.internalModel, 'isError')) {
-      this._inFlightAttributes = null;
-      // TODO IGOR DAVID seems bad to have to go back, maybe move to internalModel?
-      this.internalModel.didCleanError();
-    }
-
-    if (this.internalModel.isNew()) {
-      this.removeFromInverseRelationships(true);
-    }
-
-    if (this.internalModel.isValid()) {
-      this._inFlightAttributes = null;
-    }
-
+    let dirtyKeys = [];
+    this.localChanges.forEach(([transform, inverseTransform, key]) => {
+      this.source.immediateUpdate(inverseTransform);
+      dirtyKeys.push(key);
+    });
     return dirtyKeys;
   }
 
