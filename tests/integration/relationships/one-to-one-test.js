@@ -371,7 +371,7 @@ test("Setting a OneToOne relationship reflects correctly on the other side- asyn
 });
 
 
-test("Setting a OneToOne relationship reflects correctly on the other side- sync", function(assert) {
+test("Setting a OneToOne relationship reflects correctly on the other side- sync orbit", function(assert) {
   var job, user;
   run(function() {
     job = store.push({
@@ -398,7 +398,6 @@ test("Setting a OneToOne relationship reflects correctly on the other side- sync
   });
   assert.equal(job.get('user'), user, 'User relationship was set up correctly');
 });
-
 
 test("Setting a BelongsTo to a promise unwraps the promise before setting- async", function(assert) {
   var stanley, stanleysFriend, newFriend;

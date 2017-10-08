@@ -229,7 +229,13 @@ module.exports = {
           'ember-inflector',
           'ember-data/version',
           'ember-data/-debug',
-          'ember-data/adapters/errors'
+          'ember-data/adapters/errors',
+          '@orbit/utils',
+          '@orbit/core',
+          '@orbit/data',
+          '@orbit/store',
+          '@orbit/immutable',
+          '@orbit/coordinator'
         ]
         // cache: true|false Defaults to true
       }
