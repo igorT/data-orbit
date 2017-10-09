@@ -59,6 +59,8 @@ export default class ModelData {
   setupData(data, calculateChange) {
     let changedKeys;
     data.id = this.orbitId;
+    this.convertRelationshipForeignKeys(data);
+
     this.store.orbitStore.immediateUpdate(t => t.replaceRecord(data));
     
 
@@ -238,19 +240,21 @@ export default class ModelData {
   }
 
   getBelongsTo(key) {
-      let relationship = this.getRelationship(key);
-      if (relationship && relationship.data) {
-        return this.store._internalModelForId(relationship.data.type, relationship.data.id).getRecord();
-      }
-      return null;
+    let data = this.source.cache.records(this.modelName).get(this.orbitId);
+    let orbitData = deepGet(data, ['relationships', key]);
+    if (orbitData && orbitData.data) {
+      return this.store._internalModelForOrbitId(orbitData.data.type, orbitData.data.id);
+    }
   }
 
   setBelongsTo(key, value) {
     let toSet = value;
     if (toSet) {
-      toSet = { }
+      let internalModel = value._internalModel;
+      toSet = { type: internalModel.modelName, id: internalModel._modelData.orbitId };
     }
-    //let update = this.source.immediateUpdate(t => t.replaceRelatedRecord(this.orbitIdentity, key,));
+    let update = this.source.immediateUpdate(t => t.replaceRelatedRecord(this.orbitIdentity, key, toSet ));
+    // ORBIT TODO separate the below from attribute changes
     this.localChanges.push([update.transform, update.inverse, key]);
   }
 
@@ -403,6 +407,22 @@ export default class ModelData {
         this._relationships.get(key).setHasData(true);
       }
     });
+  }
+
+  convertRelationshipForeignKeys(data) {
+    if (data.relationsips) {
+      Object.keys(data.relationships).forEach((key) => {
+        let relationship = data.relationships[key];
+        if (relationship.data) {
+          if (Ember.isArray(relationship.data)) {
+            //relationshipData.data 
+          } else {
+            relationship.data.id = this.store._internalModelForId(relationship.data.type, relationship.data.id).orbitId;
+          }
+        }
+      })
+    }
+    data.relations
   }
 
 

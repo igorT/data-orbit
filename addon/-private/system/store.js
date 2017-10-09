@@ -210,29 +210,6 @@ const {
 
 Store = Service.extend({
 
-  createOrbitSchema() {
-      if (!injections.models) {
-        const app = getOwner(injections);
-        const modelSchemas = {};
-  
-        let modelNames = injections.modelNames || getRegisteredModels(app.base.modulePrefix);
-  
-        modelNames.forEach(name => {
-          let model = app.factoryFor(`model:${name}`).class;
-          modelSchemas[name] = {
-            id: get(model, 'id'),
-            keys: get(model, 'keys'),
-            attributes: get(model, 'attributes'),
-            relationships: get(model, 'relationships')
-          };
-        });
-  
-        injections.models = modelSchemas;
-      }
-      console.log("NEVER GET HERE");
-      return new Schema(injections);
-  },
-  
   _didPatch(operation) {
     debugger
     const replacement = operation.record;
@@ -288,31 +265,7 @@ Store = Service.extend({
     @private
   */
   init() {
-    this.orbitSchema = new OrbitSchema({
-      models: {
-        job: {
-          attributes: {
-            name: { type: 'string' }
-          },
-          relationships: {
-            user: { type: 'hasOne', model: 'user', inverse:'job' }
-          }
-
-        },
-        user: {
-          attributes: {
-            name: { type: 'string' },
-            firstName: { type: 'string' },
-            lastName: { type: 'string' },
-            isDrugAddict: { type: 'boolean'}
-          },
-          relationships: {
-            job: { type: 'hasOne', model: 'job', inverse: 'user' }
-          }
-        }
-      }
-    });
-    this.orbitStore = new SyncStore({schema: this.orbitSchema});
+    this.orbitStore = new SyncStore({schema: new OrbitSchema({})});
 
     this.orbitStore.cache.on('patch', this._didPatch, this);
 
@@ -478,6 +431,11 @@ Store = Service.extend({
 
     return record;
   },
+
+  _internalModelForOrbitId(modelName, id) {
+    return this._internalModelsFor(modelName).getByOrbitId(id);
+  },
+   
 
   /**
     If possible, this method asks the adapter to generate an ID for
@@ -2225,7 +2183,7 @@ Store = Service.extend({
       klass.modelName = klass.modelName || modelName;
 
       this._modelFactoryCache[modelName] = factory;
-      let models = clone(this.orbitStore.schema.models);
+      let models = this.orbitStore.schema.models;
 
       models[modelName] = this.buildOrbitModelDefinition(klass);
       console.log(models);
@@ -2250,7 +2208,12 @@ Store = Service.extend({
     });
     Ember.get(modelFactory, 'relationshipNames').belongsTo.forEach((key) => {
       let relationship = relationshipMap.get(key);
-      orbitRelationships[key] = { type: 'hasOne', model: relationship.type };
+      orbitRelationships[key] = {
+        type: 'hasOne',
+        model: relationship.type,
+        // ORBIT TODO, NEED SMARTER INVERSE CALCULATION
+        inverse: modelFactory.inverseFor(key, this).name
+      };
     });
     return  { attributes: orbitAttributes, relationships: orbitRelationships };
   },

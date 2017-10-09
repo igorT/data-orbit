@@ -15,6 +15,7 @@ export default class InternalModelMap {
   constructor(modelName) {
     this.modelName = modelName;
     this._idToModel = Object.create(null);
+    this._orbitIdToModel = Object.create(null);
     this._models = [];
     this._metadata = null;
   }
@@ -26,6 +27,10 @@ export default class InternalModelMap {
    */
   get(id) {
     return this._idToModel[id];
+  }
+
+  getByOrbitId(id) {
+    return this._orbitIdToModel[id];
   }
 
   has(id) {
@@ -43,6 +48,7 @@ export default class InternalModelMap {
     assert(`You cannot update the id index of an InternalModel once set. Attempted to update ${id}.`, !this.has(id) || this.get(id) === internalModel);
 
     this._idToModel[id] = internalModel;
+    this._orbitIdToModel[internalModel.orbitId] = internalModel;
   }
 
   add(internalModel, id) {
@@ -50,6 +56,7 @@ export default class InternalModelMap {
 
     if (id) {
       this._idToModel[id] = internalModel;
+      this._orbitIdToModel[internalModel.orbitId] = internalModel;
     }
 
     this._models.push(internalModel);
@@ -57,6 +64,7 @@ export default class InternalModelMap {
 
   remove(internalModel, id) {
     delete this._idToModel[id];
+    delete this._orbitIdToModel[internalModel.orbitId];
 
     let loc = this._models.indexOf(internalModel);
 

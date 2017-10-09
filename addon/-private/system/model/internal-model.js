@@ -499,15 +499,11 @@ export default class InternalModel {
     return this.modelClass.inverseFor(key);
   }
 
-  getRelationship(key) {
-    let data = this.source.cache.records(this.modelName).get(this.orbitId);
-    return deepGet(data, ['relationships', key]);
-  }
-
   getAttribute(key) {
     let data = this.source.cache.records(this.modelName).get(this.orbitId);
     return deepGet(data, ['attributes', key]);
   }
+
 
   setupData(data) {
     heimdall.increment(setupData);

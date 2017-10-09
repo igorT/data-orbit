@@ -122,8 +122,8 @@ export default function belongsTo(modelName, options) {
         value = null;
       }
       this._internalModel.setBelongsTo(key, value);
-
       return this._internalModel.getBelongsTo(key);
+      //return this._internalModel._relationships.get(key).getRecord();
     }
   }).meta(meta);
 }
