@@ -37,6 +37,9 @@ export default class ModelData {
     this.orbitIdentity = { type: this.modelName, id: this.orbitId };
     this.hasForked = false;
     this.localChanges = [];
+    // HACKITY HACK, need to ensure orbit knows about this class
+    this.store._modelFactoryFor(this.modelName);
+
   }
 
   forkSource() {
@@ -229,18 +232,22 @@ export default class ModelData {
     this._inFlightAttributes = null;
   }
 
+  getRelationship(key) {
+    let data = this.source.cache.records(this.modelName).get(this.orbitId);
+    return deepGet(data, ['relationships', key]);
+  }
+
   getBelongsTo(key) {
-    return this._relationships.get(key).getRecord();
+    return this.getRelationship(key);
   }
 
   setBelongsTo(key, value) {
-    if (value && value.then) {
-      this._relationships.get(key).setRecordPromise(value);
-    } else if (value) {
-      this._relationships.get(key).setInternalModel(value._internalModel);
-    } else {
-      this._relationships.get(key).setInternalModel(value);
+    let toSet = value;
+    if (toSet) {
+      toSet = { }
     }
+    //let update = this.source.immediateUpdate(t => t.replaceRelatedRecord(this.orbitIdentity, key,));
+    this.localChanges.push([update.transform, update.inverse, key]);
   }
 
   getAttr(key) {

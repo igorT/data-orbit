@@ -14,6 +14,7 @@ import Service from '@ember/service';
 import { typeOf, isPresent, isNone } from '@ember/utils';
 
 import { Schema as OrbitSchema } from '@orbit/data';
+import { clone } from '@orbit/utils';
 import SyncStore from './orbit/sync-store';
 import Ember from 'ember';
 import { InvalidError } from '../adapters/errors';
@@ -228,7 +229,7 @@ Store = Service.extend({
   
         injections.models = modelSchemas;
       }
-
+      console.log("NEVER GET HERE");
       return new Schema(injections);
   },
   
@@ -287,19 +288,7 @@ Store = Service.extend({
     @private
   */
   init() {
-    this.orbitSchema = new OrbitSchema({
-      models: {
-        person: {
-          attributes: {
-            name: { type: 'string' },
-            firstName: { type: 'string' },
-            lastName: { type: 'string' },
-            isDrugAddict: { type: 'boolean'}
-          }
-        }
-      }
-    });
-    this.orbitStore = new SyncStore({schema: this.orbitSchema});
+    this.orbitStore = new SyncStore({schema: new OrbitSchema({})});
 
     this.orbitStore.cache.on('patch', this._didPatch, this);
 
@@ -2213,9 +2202,34 @@ Store = Service.extend({
       klass.modelName = klass.modelName || modelName;
 
       this._modelFactoryCache[modelName] = factory;
+      let models = clone(this.orbitStore.schema.models);
+
+      models[modelName] = this.buildOrbitModelDefinition(klass);
+      console.log(models);
+
+
+      this.orbitStore.schema.upgrade({models});
     }
 
     return factory;
+  },
+
+  buildOrbitModelDefinition(modelFactory) {
+    let attributes = Ember.get(modelFactory, 'attributes')
+    let orbitAttributes = {};
+    let orbitRelationships = {};
+    attributes._keys.toArray().forEach((key) => orbitAttributes[key] = {});
+
+    let relationshipMap = Ember.get(modelFactory, 'relationshipsByName');
+    Ember.get(modelFactory, 'relationshipNames').hasMany.forEach((key) => {
+      let relationship = relationshipMap.get(key);
+      orbitRelationships[key] = { type: 'hasMany', model: relationship.type };
+    });
+    Ember.get(modelFactory, 'relationshipNames').belongsTo.forEach((key) => {
+      let relationship = relationshipMap.get(key);
+      orbitRelationships[key] = { type: 'hasOne', model: relationship.type };
+    });
+    return  { attributes: orbitAttributes, relationships: orbitRelationships };
   },
 
   /*

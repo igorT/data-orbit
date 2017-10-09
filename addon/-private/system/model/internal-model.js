@@ -499,6 +499,20 @@ export default class InternalModel {
     return this.modelClass.inverseFor(key);
   }
 
+  getRelationship(key) {
+    let data = this.source.cache.records(this.modelName).get(this.orbitId);
+    return deepGet(data, ['relationships', key]);
+  }
+
+  setBelongsTo(key, value) {
+    let toSet = value;
+    if (toSet) {
+      toSet = { }
+    }
+    //let update = this.source.immediateUpdate(t => t.replaceRelatedRecord(this.orbitIdentity, key,));
+    this.localChanges.push([update.transform, update.inverse, key]);
+  }
+
   getAttribute(key) {
     let data = this.source.cache.records(this.modelName).get(this.orbitId);
     return deepGet(data, ['attributes', key]);
