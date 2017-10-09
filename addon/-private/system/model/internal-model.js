@@ -176,6 +176,8 @@ export default class InternalModel {
     */
     this.source.on('update', e => { console.log(e); });
     this.source.on('transform', e => { console.log(e); });
+    // HACKITY HACK, need to ensure orbit knows about this class
+    this.store._modelFactoryFor(this.modelName);
     
     let t = this.source.transformBuilder.addRecord({type: this.modelName});
     let orbitId = t.record.id;
@@ -621,6 +623,20 @@ export default class InternalModel {
     return this.modelClass.inverseFor(key);
   }
 
+  getRelationship(key) {
+    let data = this.source.cache.records(this.modelName).get(this.orbitId);
+    return deepGet(data, ['relationships', key]);
+  }
+
+  setBelongsTo(key, value) {
+    let toSet = value;
+    if (toSet) {
+      toSet = { }
+    }
+    //let update = this.source.immediateUpdate(t => t.replaceRelatedRecord(this.orbitIdentity, key,));
+    this.localChanges.push([update.transform, update.inverse, key]);
+  }
+
   getAttribute(key) {
     let data = this.source.cache.records(this.modelName).get(this.orbitId);
     return deepGet(data, ['attributes', key]);
@@ -628,7 +644,7 @@ export default class InternalModel {
 
   setupData(data) {
     heimdall.increment(setupData);
-    this.store._internalModelDidReceiveRelationshipData(this.modelName, this.id, data.relationships);
+    //this.store._internalModelDidReceiveRelationshipData(this.modelName, this.id, data.relationships);
 
     let changedKeys;
 
