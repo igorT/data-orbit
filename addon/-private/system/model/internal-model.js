@@ -623,26 +623,45 @@ export default class InternalModel {
     return this.modelClass.inverseFor(key);
   }
 
-  getRelationship(key) {
+  getBelongsTo(key) {
     let data = this.source.cache.records(this.modelName).get(this.orbitId);
-    return deepGet(data, ['relationships', key]);
+    let orbitData = deepGet(data, ['relationships', key]);
+    if (orbitData && orbitData.data) {
+      return this.store._internalModelForOrbitId(orbitData.data.type, orbitData.data.id);
+    }
   }
 
-<<<<<<< HEAD
   setBelongsTo(key, value) {
     let toSet = value;
+    debugger
     if (toSet) {
-      toSet = { }
+      let internalModel = value._internalModel;
+      toSet = { type: internalModel.modelName, id: internalModel.orbitId };
     }
-    //let update = this.source.immediateUpdate(t => t.replaceRelatedRecord(this.orbitIdentity, key,));
+    let update = this.source.immediateUpdate(t => t.replaceRelatedRecord(this.orbitIdentity, key, toSet ));
+    // ORBIT TODO separate the below from attribute changes
     this.localChanges.push([update.transform, update.inverse, key]);
   }
 
-=======
->>>>>>> sync belongsTo getting works
   getAttribute(key) {
     let data = this.source.cache.records(this.modelName).get(this.orbitId);
     return deepGet(data, ['attributes', key]);
+  }
+
+  convertRelationshipForeignKeys(data) {
+    if (data.relationsips) {
+      Object.keys(data.relationships).forEach((key) => {
+        let relationship = data.relationships[key];
+        if (relationship.data) {
+          if (Ember.isArray(relationship.data)) {
+            //relationshipData.data 
+          } else {
+            relationship.data.id = this.store._internalModelForId(relationship.data.type, relationship.data.id).orbitId;
+          }
+        }
+      })
+    }
+    data.relations
   }
 
   setupData(data) {
@@ -656,6 +675,7 @@ export default class InternalModel {
     //}
     // HACKITY HACK
     data.id = this.orbitId;
+    this.convertRelationshipForeignKeys(data);
 
     this.store.orbitStore.immediateUpdate(t => t.replaceRecord(data));
 

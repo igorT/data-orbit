@@ -219,33 +219,6 @@ const {
 
 Store = Service.extend({
 
-<<<<<<< HEAD
-  createOrbitSchema() {
-      if (!injections.models) {
-        const app = getOwner(injections);
-        const modelSchemas = {};
-  
-        let modelNames = injections.modelNames || getRegisteredModels(app.base.modulePrefix);
-  
-        modelNames.forEach(name => {
-          let model = app.factoryFor(`model:${name}`).class;
-          modelSchemas[name] = {
-            id: get(model, 'id'),
-            keys: get(model, 'keys'),
-            attributes: get(model, 'attributes'),
-            relationships: get(model, 'relationships')
-          };
-        });
-  
-        injections.models = modelSchemas;
-      }
-      console.log("NEVER GET HERE");
-      return new Schema(injections);
-  },
-  
-=======
-
->>>>>>> sync belongsTo getting works
   _didPatch(operation) {
     debugger
     const replacement = operation.record;
@@ -301,35 +274,7 @@ Store = Service.extend({
     @private
   */
   init() {
-<<<<<<< HEAD
     this.orbitStore = new SyncStore({schema: new OrbitSchema({})});
-=======
-    this.orbitSchema = new OrbitSchema({
-      models: {
-        job: {
-          attributes: {
-            name: { type: 'string' }
-          },
-          relationships: {
-            user: { type: 'hasOne', model: 'user', inverse:'job' }
-          }
-
-        },
-        user: {
-          attributes: {
-            name: { type: 'string' },
-            firstName: { type: 'string' },
-            lastName: { type: 'string' },
-            isDrugAddict: { type: 'boolean'}
-          },
-          relationships: {
-            job: { type: 'hasOne', model: 'job', inverse: 'user' }
-          }
-        }
-      }
-    });
-    this.orbitStore = new SyncStore({schema: this.orbitSchema});
->>>>>>> sync belongsTo getting works
 
     this.orbitStore.cache.on('patch', this._didPatch, this);
 
@@ -1243,6 +1188,10 @@ Store = Service.extend({
     assert(`Passing classes to store methods has been removed. Please pass a dasherized string instead of ${modelName}`, typeof modelName === 'string');
 
     return this._internalModelForId(modelName, id).getRecord();
+  },
+
+  _internalModelForOrbitId(modelName, id) {
+    return this._internalModelsFor(modelName).getByOrbitId(id);
   },
 
   _internalModelForId(modelName, id) {
@@ -2256,8 +2205,10 @@ Store = Service.extend({
       // TODO: deprecate this
       klass.modelName = klass.modelName || modelName;
 
+      debugger
       this._modelFactoryCache[modelName] = factory;
-      let models = clone(this.orbitStore.schema.models);
+      //let models = clone(this.orbitStore.schema.models);
+      let models = this.orbitStore.schema.models;
 
       models[modelName] = this.buildOrbitModelDefinition(klass);
       console.log(models);
@@ -2280,9 +2231,15 @@ Store = Service.extend({
       let relationship = relationshipMap.get(key);
       orbitRelationships[key] = { type: 'hasMany', model: relationship.type };
     });
+
     Ember.get(modelFactory, 'relationshipNames').belongsTo.forEach((key) => {
       let relationship = relationshipMap.get(key);
-      orbitRelationships[key] = { type: 'hasOne', model: relationship.type };
+      orbitRelationships[key] = {
+        type: 'hasOne',
+        model: relationship.type,
+        // ORBIT TODO, NEED SMARTER INVERSE CALCULATION
+        inverse: modelFactory.inverseFor(key, this).name
+      };
     });
     return  { attributes: orbitAttributes, relationships: orbitRelationships };
   },

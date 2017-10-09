@@ -115,9 +115,10 @@ export default function belongsTo(modelName, options) {
         });
       }
       
-      let relationship = this._internalModel.getRelationship(key);
-      if (relationship && relationship.data) {
-        return this.store._internalModelForId(relationship.data.type, relationship.data.id).getRecord();
+      debugger
+      let relationship = this._internalModel.getBelongsTo(key);
+      if (relationship) {
+        return relationship.getRecord();
       }
       return null;
     },
@@ -134,7 +135,8 @@ export default function belongsTo(modelName, options) {
         this._internalModel._relationships.get(key).setInternalModel(value);
       }*/
       this._internalModel.setBelongsTo(key, value);
-      return this._internalModel._relationships.get(key).getRecord();
+      return this._internalModel.getBelongsTo(key);
+      //return this._internalModel._relationships.get(key).getRecord();
     }
   }).meta(meta);
 }
