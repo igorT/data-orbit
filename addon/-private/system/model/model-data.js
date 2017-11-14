@@ -14,6 +14,8 @@ export default class ModelData {
     this.store = store;
     this.modelName = modelName;
     this.internalModel = internalModel;
+    // HACKITY HACK, need to ensure orbit knows about this class
+    this.store._modelFactoryFor(this.modelName);
     if (data) {
       this.__data = data;
     }
@@ -37,8 +39,6 @@ export default class ModelData {
     this.orbitIdentity = { type: this.modelName, id: this.orbitId };
     this.hasForked = false;
     this.localChanges = [];
-    // HACKITY HACK, need to ensure orbit knows about this class
-    this.store._modelFactoryFor(this.modelName);
 
   }
 
