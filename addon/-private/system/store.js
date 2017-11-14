@@ -2159,7 +2159,6 @@ Store = Service.extend({
   },
 
   _modelFactoryFor(modelName) {
-    debugger
     heimdall.increment(modelFor);
     let factory = this._modelFactoryCache[modelName];
 
@@ -2188,8 +2187,6 @@ Store = Service.extend({
 
       models[modelName] = this.buildOrbitModelDefinition(klass);
       console.log(models);
-
-      debugger
 
       this.orbitStore.schema.upgrade({models});
     }

@@ -243,7 +243,8 @@ export default class ModelData {
     let data = this.source.cache.records(this.modelName).get(this.orbitId);
     let orbitData = deepGet(data, ['relationships', key]);
     if (orbitData && orbitData.data) {
-      return this.store._internalModelForOrbitId(orbitData.data.type, orbitData.data.id);
+      let internalModel = this.store._internalModelForOrbitId(orbitData.data.type, orbitData.data.id);
+      return internalModel && internalModel.getRecord();
     }
   }
 

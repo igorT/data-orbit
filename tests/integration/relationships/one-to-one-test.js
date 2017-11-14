@@ -396,6 +396,7 @@ test("Setting a OneToOne relationship reflects correctly on the other side- sync
   run(function() {
     user.set('job', job);
   });
+  debugger
   assert.equal(job.get('user'), user, 'User relationship was set up correctly');
 });
 
