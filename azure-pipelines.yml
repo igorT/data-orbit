@@ -19,4 +19,5 @@ steps:
     yarn
     yarn lint:features
     yarn lint:js
+    yarn test
   displayName: 'Run a multi-line script'
