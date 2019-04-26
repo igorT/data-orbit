@@ -10,7 +10,7 @@
     "lint:js": "eslint .",
     "lint:features": "./bin/lint-features",
     "start": "yarn workspace ember-data start",
-    "test": "yarn workspace ember-data test",
+    "test": "yarn workspace ember-data test --server",
     "test:all": "yarn workspace ember-data test:all",
     "test:node": "yarn workspace ember-data node node-tests/nodetest-runner.js",
     "test:production": "yarn workspace ember-data test:production",
