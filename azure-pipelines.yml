@@ -70,3 +70,49 @@ steps:
 - script: |
     yarn test:try-one ember-canary
   displayName: 'Ember Canary'
+
+- script: |
+     yarn test-external:ilios-frontend
+  displayName: 'External: ilios-frontend'
+
+- script: |
+     yarn test-external:travis-web
+  displayName: 'External: travis-web'
+
+- script: |
+     yarn test-external:storefront
+  displayName: 'External: storefront'
+
+- script: |
+    yarn test-external:factory-guy
+  displayName: 'External: factory-guy'
+
+- script: |
+    yarn test-external:ember-observer
+  displayName: 'External: ember-observer'
+
+- script: |
+    yarn test-external:ember-resource-metadata
+  displayName: 'External: ember-resource-metadata'
+
+- script: |
+    yarn test-external:ember-data-relationship-tracker
+  displayName: 'External: ember-data-relationship-tracker'
+
+- script: |
+    yarn test-external:model-fragments
+  displayName: 'External: model-fragments'
+
+- script: |
+    yarn test-external:emberaddons.com
+  displayName: 'External: emberaddons.com'
+
+- script: |
+    yarn test-external:ember-data-change-tracker
+  displayName: 'External: ember-data-change-tracker
+
+- script: |
+    yarn test-external:ember-m3
+  displayName: 'External: ember-m3
+
+
