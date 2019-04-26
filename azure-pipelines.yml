@@ -18,6 +18,10 @@ steps:
   inputs:
     versionSpec: '10.x' # The version we're installing
 
+- script: |
+    brew install brew-cask
+    brew cask install google-chrome
+
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
