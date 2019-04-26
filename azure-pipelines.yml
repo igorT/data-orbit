@@ -109,7 +109,7 @@ steps:
 
 - script: |
     yarn test-external:ember-data-change-tracker
-  displayName: 'External: ember-data-change-tracker
+  displayName: 'External: ember-data-change-tracker'
 
 - script: |
     yarn test-external:ember-m3
