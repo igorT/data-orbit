@@ -9,7 +9,7 @@ trigger:
 - release
 
 pool:
-  vmImage: 'Ubuntu-16.04'
+  vmImage: 'macOS-10.14'
 
 steps:
 - script: echo Hello, world!
