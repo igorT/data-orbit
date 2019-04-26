@@ -29,5 +29,24 @@ steps:
     yarn
     yarn lint:features
     yarn lint:js
+  displayName: 'Lint'
+
+- script: |
     yarn test
-  displayName: 'Run a multi-line script'
+  displayName: 'Basic Tests'
+
+- script: |
+    yarn test:enabled-in-progress-features
+  displayName: 'In progress features'
+
+- script: |
+    yarn test:production
+  displayName: 'Production'
+
+- script: |
+    TARGET_IE11=true yarn test
+  displayName: 'Max transpilation Tests'
+
+- script: |
+    yarn test:node
+  displayName: 'Node Tests'
