@@ -113,6 +113,4 @@ steps:
 
 - script: |
     yarn test-external:ember-m3
-  displayName: 'External: ember-m3
-
-
+  displayName: 'External: ember-m3'
