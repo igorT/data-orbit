@@ -86,9 +86,29 @@ jobs:
   - script: |
       yarn test:try-one ember-canary
     displayName: 'Ember Canary'
+ 
+- job: External_Partner_tests_ilios
 
+  pool:
+    vmImage: 'macOS-10.14'
 
-- job: External_Partner_tests
+  steps:
+
+  - task: NodeTool@0
+    displayName: Node install
+    inputs:
+      versionSpec: '10.x' # The version we're installing
+
+  - script: |
+      brew update
+      brew cask install firefox
+      yarn
+
+  - script: |
+       yarn test-external:ilios-frontend
+    displayName: 'External: ilios-frontend'
+
+- job: External_Partner_tests_travis
 
   pool:
     vmImage: 'macOS-10.14'
@@ -107,12 +127,27 @@ jobs:
       yarn
 
   - script: |
-       yarn test-external:ilios-frontend
-    displayName: 'External: ilios-frontend'
-
-  - script: |
        yarn test-external:travis-web
     displayName: 'External: travis-web'
+
+
+- job: External_Partner_tests_other
+
+  pool:
+    vmImage: 'macOS-10.14'
+
+  steps:
+
+  - task: NodeTool@0
+    displayName: Node install
+    inputs:
+      versionSpec: '10.x' # The version we're installing
+
+  - script: |
+      brew update
+      brew cask install google-chrome
+      brew cask install firefox
+      yarn
 
   - script: |
        yarn test-external:storefront
