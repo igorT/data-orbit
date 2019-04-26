@@ -23,12 +23,9 @@ jobs:
   - script: |
       brew update
       brew cask install google-chrome
-
-  - script: echo Hello, world!
-    displayName: 'Run a one-line script'
+      yarn
 
   - script: |
-      yarn
       yarn lint:features
       yarn lint:js
     displayName: 'Lint'
@@ -68,6 +65,7 @@ jobs:
   - script: |
       brew update
       brew cask install google-chrome
+      yarn
 
   - script: |
       yarn test:try-one ember-lts-3.4
@@ -106,7 +104,8 @@ jobs:
       brew update
       brew cask install google-chrome
       brew cask install firefox
-      
+      yarn
+
   - script: |
        yarn test-external:ilios-frontend
     displayName: 'External: ilios-frontend'
