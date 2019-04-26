@@ -21,6 +21,7 @@ steps:
 - script: |
     brew update
     brew cask install google-chrome
+    brew cask install firefox
 
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
