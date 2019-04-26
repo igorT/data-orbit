@@ -9,9 +9,15 @@ trigger:
 - release
 
 pool:
-  vmImage: 'ubuntu-16.04'
+  vmImage: 'macOS-10.14'
 
 steps:
+
+- task: NodeTool@0
+  displayName: Node install
+  inputs:
+    versionSpec: '10.x' # The version we're installing
+
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
